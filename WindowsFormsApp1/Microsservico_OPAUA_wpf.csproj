@@ -304,6 +304,7 @@
     <Compile Include="MapOPC.cs" />
     <Compile Include="Pacote1001_1.cs" />
     <Compile Include="Pacote2001_0.cs" />
+    <Compile Include="Pacote2001_0_auxiliarTD.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

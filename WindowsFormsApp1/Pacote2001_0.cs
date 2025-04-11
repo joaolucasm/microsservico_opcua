@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms.VisualStyles;
+using WindowsFormsApp1;
 
 namespace microsservico_opcua
 {
@@ -27,6 +28,22 @@ namespace microsservico_opcua
         public string protocolo = "OPC UA";
         public int pausado; //0 para não iniciar pausado, 1 para iniciar pausado
         public MapOPC mapOpc;
+                
+       
+        public Pacote2001_0(Pacote2001_0 pacote)
+        {
+            this.codID = pacote.codID;
+            this.taxaLeitura = pacote.taxaLeitura;
+            this.DNSlot = pacote.DNSlot;
+            this.tipoIed = pacote.tipoIed;
+            this.ip = pacote.ip;
+            this.circuito = pacote.circuito;
+            this.local = pacote.local;
+            this.mac = pacote.mac;
+            this.tipoAtivoAssociado = pacote.tipoAtivoAssociado;
+            this.pausado = pacote.pausado;
+            this.mapOpc = pacote.mapOpc;
+        }
 
         public Pacote2001_0(int codID,
             int taxaLeitura,
