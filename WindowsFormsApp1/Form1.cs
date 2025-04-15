@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Opc.UaFx.Client;
 using WindowsFormsApp1;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace microsservico_opcua
 {
@@ -32,6 +33,11 @@ namespace microsservico_opcua
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            System.Windows.Forms.Timer timerExibicaoResultados = new System.Windows.Forms.Timer();
+            timerExibicaoResultados.Interval = 1000; // 1 second
+            timerExibicaoResultados.Tick += timerExibicaoResultados_Tick;
+            timerExibicaoResultados.Start();
+            pacotesDeConexao.Add(new List<Pacote2001_0_auxiliarTD>());
             instanciadorTextBox();
         }
 
@@ -45,6 +51,22 @@ namespace microsservico_opcua
             txtBoxPotApar.Text = "ns=??;i=??";
             txtBoxPotRealWw.Text = "ns=??;i=??";
             txtBoxFatorPot.Text = "ns=??;i=??";
+        }
+
+        private void limpador()
+        {
+            numericUpDownCodId.Text = "0";
+            numericUpDownTaxLeitura.Text = "0";
+            txtBoxDns.Clear();
+            txtBoxIp.Clear();
+            txtBoxCircuito.Clear();
+            txtBoxLocal.Clear();
+            txtBoxMac.Clear();
+            cbTipoAtivo.Text = "";
+            cbPausado.Text = "";
+            txtBoxAngTensao.Clear();
+            txtBoxConexao.Clear();
+            instanciadorTextBox();
         }
 
         private void salvarBotton_Click(object sender, EventArgs e)
@@ -87,6 +109,8 @@ namespace microsservico_opcua
                     }
                 }
             }
+
+            //limpador();
         }
 
         //--------------------------------------------------- INICIO DOS MÉTODOS OPERADORES-------------------------------------------------------------
@@ -102,7 +126,7 @@ namespace microsservico_opcua
                     conexaoIed = new List<Pacote2001_0_auxiliarTD>(pacotesDeConexao[valorIndexDaLista]);
                 }
 
-                if (conexaoIed.Count != 0) 
+                if (conexaoIed.Count >= 1) 
                 {
                     //laço de varredura das ieds
                     for (int i = 0; i < conexaoIed.Count; i++)
@@ -118,14 +142,15 @@ namespace microsservico_opcua
                                 var client = new OpcClient(conexaoIed[i].mapOpc.linkConexao);
                                 client.Connect();
 
-                                dadosServidor.corrente = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.corrente));
-                                dadosServidor.tensao = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.tensao));
-                                dadosServidor.angTensao = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.angTensao));
-                                dadosServidor.potAparenteVA = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.potAparenteVA));
-                                dadosServidor.potReatVAr = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.potReatVAr));
-                                dadosServidor.potRealW = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.potRealW));
-                                dadosServidor.fatorP = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.fatorP));
-                                dadosServidor.freq = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.freq));
+                                dadosServidor.corrente = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.corrente).Value);
+                                dadosServidor.tensao = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.tensao).Value);
+                                dadosServidor.angTensao = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.angTensao).Value);
+                                dadosServidor.potAparenteVA = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.potAparenteVA).Value);
+                                dadosServidor.potReatVAr = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.potReatVAr).Value);
+                                dadosServidor.potRealW = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.potRealW).Value);
+                                dadosServidor.fatorP = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.fatorP).Value);
+                                dadosServidor.freq = Convert.ToDouble(client.ReadNode(conexaoIed[i].mapOpc.freq).Value);
+                                dadosServidor.codID = Convert.ToInt32(conexaoIed[i].codID);
 
                                 nossoMutex.WaitOne();
                                 resultadosBuscas.Add(dadosServidor);
@@ -151,5 +176,17 @@ namespace microsservico_opcua
             }
 
         }
+        private void timerExibicaoResultados_Tick(object sender, EventArgs e)
+        {
+            //limpa a lista de visualizacao 
+            listViewResultadosBuscas.Items.Clear();
+
+            foreach (Pacote1001_1 resultados in resultadosBuscas)
+            {
+                listViewResultadosBuscas.Items.Add(new ListViewItem(new String[] { resultados.codID.ToString(), resultados.corrente.ToString(), resultados.tensao.ToString(), resultados.angTensao.ToString(), resultados.freq.ToString(), resultados.fatorP.ToString(), resultados.potRealW.ToString(), resultados.potAparenteVA.ToString(), resultados.potReatVAr.ToString() }));
+            }
+
+        }
+
     }
 }

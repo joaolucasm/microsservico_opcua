@@ -8,6 +8,7 @@ namespace WindowsFormsApp1
 {
     internal class Pacote1001_1
     {
+        public int codID;
         public double corrente;
         public double tensao;
         public double angTensao;
@@ -22,7 +23,7 @@ namespace WindowsFormsApp1
 
         }
 
-        public Pacote1001_1(double corrente, double tensao, double angTensao, double potAparenteVA, double potReatVAr, double potRealW, double fatoP, double freq)
+        public Pacote1001_1(double corrente, double tensao, double angTensao, double freq, double fatoP, double potRealW, double potAparenteVA, double potReatVAr)
          {
             this.corrente = corrente;
             this.tensao = tensao;
